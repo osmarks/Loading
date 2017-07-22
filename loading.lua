@@ -76,7 +76,7 @@ end,function()
     paintutils.drawLine(3,math.ceil(h/2),w-2,math.ceil(h/2),col.toload)
     for i = 0,w-5 do
         paintutils.drawPixel(i+3,math.ceil(h/2),col.loaded)
-        local tim = math.random(1,100)/1000
+        local tim = math.random(1,100)/10
         sleep(tim)
     end
 end,function()
