@@ -116,7 +116,7 @@ end, function()
     local bar_width = w - 4
         
     while true do
-        local progress = (math.sin() / 2) + 0.5
+        local progress = (math.sin(run_time()) / 2) + 0.5
             
         local loaded_pixels = progress * bar_width
         local remaining_pixels = bar_width - loaded_pixels
