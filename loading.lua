@@ -82,7 +82,7 @@ local function write_center(txt)
     _, y = term.getCursorPos()
     for line in txt:gmatch("[^\r\n]+") do
         term.setCursorPos(math.ceil(w/2)-math.ceil(#line/2), y)
-        term.write(txt)
+        term.write(line)
         y = y + 1
     end
 end
