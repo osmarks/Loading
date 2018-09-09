@@ -88,28 +88,6 @@ local function write_center(txt)
     end
 end
 
--- Converts thing between -1 and 1 to between 0 and 1
-local function rescale(x)
-   return (x / 2) + 0.5 
-end
-
-local function waves(v, wav)
-    local sum = 0
-    for _, wav in pairs(wav) do
-        sum = sum + math.sin((x * wav.mul) + wav.add)
-    end
-    return sum / #wav
-end
-
-local function generate_waves(qty)
-    local w = {}
-    for i = 1, qty do
-        new_wave = { mul = math.random(0.5, 5), add = math.random(-5, 5) }
-        table.insert(w, new_wave) 
-    end
-    return w
-end
-
 local start = os.clock()
 local dead = false
 
@@ -138,11 +116,11 @@ end, function()
     local start_x = 3
     local bar_width = w - 4
         
-    local wav = generate_waves(5)
+    local p = 1
         
-    while true do
-        local progress = waves(run_time() / 10, wav)
-            
+    while p > 0.000005 do 
+        local progress = 1 - p
+        p = p * 0.95
         local loaded_pixels = math.floor((progress * bar_width) + 0.5) -- round
         local remaining_pixels = bar_width - loaded_pixels
             
