@@ -88,6 +88,20 @@ local function write_center(txt)
     end
 end
 
+-- Converts thing between -1 and 1 to between 0 and 1
+local function rescale(x)
+   return (x / 2) + 0.5 
+end
+
+local function average(...)
+    local nums = {...}
+    local sum = 0
+    for _, n in pairs(nums) do
+        sum = sum + n
+    end
+    return sum / #nums
+end
+
 local start = os.clock()
 local dead = false
 
@@ -117,15 +131,15 @@ end, function()
     local bar_width = w - 4
         
     while true do
-        local progress = (math.sin(run_time()) / 2) + 0.5
+        local progress = average(rescale(math.sin(run_time() / 20)), rescale(math.cos(run_time() / 10)) / 2)
             
-        local loaded_pixels = math.floor(progress * bar_width)
+        local loaded_pixels = math.floor((progress * bar_width) + 0.5) -- round
         local remaining_pixels = bar_width - loaded_pixels
             
         term.setCursorPos(start_x, y)
         term.blit((" "):rep(bar_width), text:rep(bar_width), loaded:rep(loaded_pixels) .. toload:rep(remaining_pixels))
             
-        sleep(0.5)
+        sleep(0.2)
     end
 end, function()
     while true do
