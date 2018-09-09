@@ -70,7 +70,7 @@ end
 
 local function to_hex_char(color)
     local power = math.log(color) / math.log(2)
-    return tonumber(power, 16)
+    return string.format("%x", power)
 end
 
 term.setBackgroundColor(col.bg)
