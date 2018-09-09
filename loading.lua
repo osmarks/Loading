@@ -93,13 +93,21 @@ local function rescale(x)
    return (x / 2) + 0.5 
 end
 
-local function average(...)
-    local nums = {...}
+local function waves(v, wav)
     local sum = 0
-    for _, n in pairs(nums) do
-        sum = sum + n
+    for _, wav in pairs(wav) do
+        sum = sum + math.sin((x * wav.mul) + wav.add)
     end
-    return sum / #nums
+    return sum / #wav
+end
+
+local function generate_waves(qty)
+    local w = {}
+    for i = 1, qty do
+        new_wave = { mul = math.random(0.5, 5), add = math.random(-5, 5) }
+        table.insert(w, new_wave) 
+    end
+    return w
 end
 
 local start = os.clock()
@@ -130,8 +138,10 @@ end, function()
     local start_x = 3
     local bar_width = w - 4
         
+    local wav = generate_waves(5)
+        
     while true do
-        local progress = average(rescale(math.sin(run_time() / 20)), rescale(math.cos(run_time() / 10)) / 2)
+        local progress = waves(run_time() / 10, wav)
             
         local loaded_pixels = math.floor((progress * bar_width) + 0.5) -- round
         local remaining_pixels = bar_width - loaded_pixels
