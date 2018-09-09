@@ -118,9 +118,10 @@ end, function()
     while true do
         local progress = (math.sin(run_time()) / 2) + 0.5
             
-        local loaded_pixels = progress * bar_width
+        local loaded_pixels = math.floor(progress * bar_width)
         local remaining_pixels = bar_width - loaded_pixels
             
+        term.setCursorPos(start_x, y)
         term.blit((" "):rep(bar_width), text:rep(bar_width), loaded:rep(loaded_pixels) .. toload:rep(remaining_pixels))
             
         sleep(0.5)
