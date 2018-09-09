@@ -74,6 +74,10 @@ local function to_hex_char(color)
     return string.format("%x", power)
 end
 
+local function round(x)
+    return math.floor(x + 0.5)
+end
+
 term.setBackgroundColor(col.bg)
 term.clear()
 term.setCursorPos(1,1)
@@ -92,7 +96,7 @@ local start = os.clock()
 local dead = false
 
 local function run_time()
-   return os.clock() - start 
+   return os.clock() - start
 end
 
 parallel.waitForAny(function()
@@ -115,18 +119,27 @@ end, function()
     local y = h / 2
     local start_x = 3
     local bar_width = w - 4
-        
+
     local p = 1
-        
-    while p > 0.000005 do 
+
+    while p > 0.000005 do
         local progress = 1 - p
-        p = p * 0.95
-        local loaded_pixels = math.floor((progress * bar_width) + 0.5) -- round
-        local remaining_pixels = bar_width - loaded_pixels
-            
+        p = p * 0.99
+        local raw_loaded_pixels = (progress * bar_width) + 0.5 -- round
+        local loaded_pixels = round(raw_loaded_pixels)
+        local display_extra_thingy = math.ceil(raw_loaded_pixels) - raw_loaded_pixels > 0.5
+        local remaining_pixels = bar_width - round(loaded_pixels)
+
         term.setCursorPos(start_x, y)
         term.blit((" "):rep(bar_width), text:rep(bar_width), loaded:rep(loaded_pixels) .. toload:rep(remaining_pixels))
-            
+
+        if display_extra_thingy then
+            term.setCursorPos(start_x + loaded_pixels, y)
+            term.setBackgroundColor(col.toload)
+            term.setTextColor(col.loaded)
+            term.write "\149"
+        end
+
         sleep(0.2)
     end
 end, function()
