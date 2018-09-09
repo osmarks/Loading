@@ -71,7 +71,7 @@ local splash = {
     "Searching for plot device...",
     "Trying to sort in O(n)...",
     "Laughing at your pictures-I mean, loading...",
-    "Sending data to NS-O mean, our servers.",
+    "Sending data to NS-I mean, our servers.",
     "Looking for sense of humour, please hold on.",
     "Please wait while the intern refills his coffee.",
     "What is the airspeed velocity of an unladen swallow?",
