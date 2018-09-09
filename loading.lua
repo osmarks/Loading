@@ -122,14 +122,16 @@ end, function()
 
     local p = 1
 
-    while p > 0.000005 do
+    while true do
         local progress = 1 - p
         p = p * 0.99
         local raw_loaded_pixels = (progress * bar_width) + 0.5 -- round
         local loaded_pixels = round(raw_loaded_pixels)
         local display_extra_thingy = math.ceil(raw_loaded_pixels) - raw_loaded_pixels > 0.5
-        local remaining_pixels = bar_width - round(loaded_pixels)
+        local remaining_pixels = bar_width - loaded_pixels
 
+        if bar_width - raw_loaded_pixels < 0.1 then break end
+            
         term.setCursorPos(start_x, y)
         term.blit((" "):rep(bar_width), text:rep(bar_width), loaded:rep(loaded_pixels) .. toload:rep(remaining_pixels))
 
