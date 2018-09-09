@@ -36,6 +36,20 @@ local splash = {
     "Rahph was here",
     "Rahph, stop messing with my programs.",
     "Don't press the big red button",
+    "100% gluten-free!",
+    "Voiding warranty...",
+    "Error 507611404",
+    "Overwriting data with cats...",
+    "Converting universe to paperclips...",
+    "Self-destruct in 3... 2... 1...",
+    "Protocol Omega initiated.",
+    "Simulating identical copy of universe...",
+    "java.lang.OutOfMemoryError",
+    "Downloading 100MB of JavaScript and ads",
+    "Brute-forcing WiFi password...",
+    "Contacting field agents...",
+    "Reversing existing progress...",
+    "Generating witty loading text"
 }
 
 local col
@@ -55,53 +69,90 @@ else
     }
 end
 
+local function to_hex_char(color)
+    local power = math.log(color) / math.log(2)
+    return string.format("%x", power)
+end
+
+local function round(x)
+    return math.floor(x + 0.5)
+end
+
 term.setBackgroundColor(col.bg)
 term.clear()
 term.setCursorPos(1,1)
 local w,h = term.getSize()
 
-local function writeC(txt)
-    _,y = term.getCursorPos()
-    term.setCursorPos(math.ceil(w/2)-math.ceil(#txt/2),y)
-    write(txt)
+local function write_center(txt)
+    _, y = term.getCursorPos()
+    for line in txt:gmatch("[^\r\n]+") do
+        term.setCursorPos(math.ceil(w/2)-math.ceil(#line/2), y)
+        term.write(line)
+        y = y + 1
+    end
 end
-local tottim = 0
+
+local start = os.clock()
 local dead = false
+
+local function run_time()
+   return os.clock() - start
+end
+
 parallel.waitForAny(function()
     while true do
         for i = 0,3 do
+            if math.random(0, 20) == 7 then i = 6 end
             term.setCursorPos(1,7)
             term.setTextColor(col.text)
             term.setBackgroundColor(col.bg)
             term.clearLine()
-            writeC("Loading")
+            write_center("Loading")
             write(string.rep(".",i))
             sleep(0.5)
         end
     end
-end,function()
-    paintutils.drawLine(3,math.ceil(h/2),w-2,math.ceil(h/2),col.toload)
-    for i = 0,w-5 do
-        paintutils.drawPixel(i+3,math.ceil(h/2),col.loaded)
-        local tim = math.random(1,100)/10
-        sleep(tim)
+end, function()
+    local toload = to_hex_char(col.toload)
+    local loaded = to_hex_char(col.loaded)
+    local text = to_hex_char(col.text)
+    local y = h / 2
+    local start_x = 3
+    local bar_width = w - 4
+
+    local p = 1
+
+    while p > 0.000005 do
+        local progress = 1 - p
+        p = p * 0.99
+        local raw_loaded_pixels = (progress * bar_width) + 0.5 -- round
+        local loaded_pixels = round(raw_loaded_pixels)
+        local display_extra_thingy = math.ceil(raw_loaded_pixels) - raw_loaded_pixels > 0.5
+        local remaining_pixels = bar_width - round(loaded_pixels)
+
+        term.setCursorPos(start_x, y)
+        term.blit((" "):rep(bar_width), text:rep(bar_width), loaded:rep(loaded_pixels) .. toload:rep(remaining_pixels))
+
+        if display_extra_thingy then
+            term.setCursorPos(start_x + loaded_pixels, y)
+            term.setBackgroundColor(col.toload)
+            term.setTextColor(col.loaded)
+            term.write "\149"
+        end
+
+        sleep(0.2)
     end
-end,function()
-    while true do
-        sleep(0.1)
-        tottim = tottim+0.1
-    end
-end,function()
+end, function()
     while true do
         local choice = splash[math.random(1,#splash)]
         term.setCursorPos(1,math.ceil(h/2)+2)
         term.setBackgroundColor(col.bg)
         term.setTextColor(col.text)
         term.clearLine()
-        writeC(choice)
+        write_center(choice)
         sleep(5)
     end
-end,function()
+end, function()
     while true do
         local ev = os.pullEventRaw("terminate")
         if ev == "terminate" then
@@ -110,15 +161,20 @@ end,function()
         end
     end
 end)
+
+local time = run_time()
+
 os.pullEvent = old
 term.setBackgroundColor(colors.black)
 term.setCursorPos(1,1)
 term.setTextColor(colors.white)
 term.clear()
 if dead then
-    print("You gave up at "..tottim.." seconds of loading!")
+    print("You gave up at", time, "seconds of loading!")
 else
-    print("You survived "..tottim.." seconds of loading!")
+    print("You survived", time, "seconds of loading!")
 end
-print("")
-print("Created by Ale32bit")
+
+print ""
+print "Created by Ale32bit"
+print "Modified by osmarks"
